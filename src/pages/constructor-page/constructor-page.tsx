@@ -5,7 +5,6 @@ import { BurgerConstructor } from '../../components';
 import { Preloader } from '../../components/ui';
 import { FC, useEffect } from 'react';
 import { getIngredientsLoading } from '@selectors';
-import { fetchIngredients } from '../../services/slices/ingredientsSlice';
 import { clearOrder } from '../../services/slices/orderSlice';
 
 export const ConstructorPage: FC = () => {
@@ -13,7 +12,6 @@ export const ConstructorPage: FC = () => {
   const isIngredientsLoading = useSelector(getIngredientsLoading);
 
   useEffect(() => {
-    dispatch(fetchIngredients());
     dispatch(clearOrder());
   }, [dispatch]);
 

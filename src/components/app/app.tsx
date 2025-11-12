@@ -20,6 +20,7 @@ import { IngredientDetails } from '../ingredient-details';
 import { checkUserAuth } from '../../services/slices/userSlice';
 import { FC, useCallback, useEffect } from 'react';
 import { ProtectedRoute } from '../protected-route/protected-route';
+import { fetchIngredients } from '../../services/slices/ingredientsSlice';
 
 export const App: FC = () => {
   const location = useLocation();
@@ -28,6 +29,7 @@ export const App: FC = () => {
   const background = location.state?.background;
 
   useEffect(() => {
+    dispatch(fetchIngredients());
     dispatch(checkUserAuth());
   }, [dispatch]);
 
@@ -126,9 +128,11 @@ export const App: FC = () => {
           <Route
             path='/profile/orders/:number'
             element={
-              <Modal title='Детали заказа' onClose={handleCloseModal}>
-                <OrderInfo />
-              </Modal>
+              <ProtectedRoute>
+                <Modal title='Детали заказа' onClose={handleCloseModal}>
+                  <OrderInfo />
+                </Modal>
+              </ProtectedRoute>
             }
           />
         </Routes>
