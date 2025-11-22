@@ -7,7 +7,7 @@ import {
   logoutApi,
   TLoginData,
   TRegisterData
-} from '@api';
+} from '../../utils/burger-api';
 import { TUser } from '@utils-types';
 import { setCookie, getCookie, deleteCookie } from '../../utils/cookie';
 
