@@ -36,6 +36,23 @@ const mockUser: TUser = {
   name: 'Test User'
 };
 
+const mockLoginData = {
+  email: 'test@example.com',
+  password: 'password'
+};
+
+const mockRegisterData = {
+  email: 'test@example.com',
+  password: 'password',
+  name: 'Test User'
+};
+
+const mockUserResponse = {
+  user: mockUser,
+  accessToken: 'test-token',
+  refreshToken: 'test-refresh-token'
+};
+
 describe('Редьюсер пользователя', () => {
   beforeEach(() => {
     jest.clearAllMocks();
@@ -43,26 +60,18 @@ describe('Редьюсер пользователя', () => {
 
   test('должен обрабатывать начало авторизации', () => {
     (loginUserApi as jest.Mock).mockReturnValue(new Promise(() => {}));
-
-    store.dispatch(
-      loginUser({ email: 'test@example.com', password: 'password' })
-    );
-
+    
+    store.dispatch(loginUser(mockLoginData));
+    
     const state = store.getState().user;
     expect(state.loading).toBe(true);
     expect(state.error).toBeNull();
   });
 
   test('должен обрабатывать успешную авторизацию', async () => {
-    (loginUserApi as jest.Mock).mockResolvedValue({
-      user: mockUser,
-      accessToken: 'test-token',
-      refreshToken: 'test-refresh-token'
-    });
+    (loginUserApi as jest.Mock).mockResolvedValue(mockUserResponse);
 
-    await store.dispatch(
-      loginUser({ email: 'test@example.com', password: 'password' })
-    );
+    await store.dispatch(loginUser(mockLoginData));
 
     const state = store.getState().user;
     expect(state.loading).toBe(false);
@@ -74,9 +83,7 @@ describe('Редьюсер пользователя', () => {
     const errorMessage = 'Failed to login';
     (loginUserApi as jest.Mock).mockRejectedValue(new Error(errorMessage));
 
-    await store.dispatch(
-      loginUser({ email: 'test@example.com', password: 'password' })
-    );
+    await store.dispatch(loginUser(mockLoginData));
 
     const state = store.getState().user;
     expect(state.loading).toBe(false);
@@ -85,34 +92,18 @@ describe('Редьюсер пользователя', () => {
 
   test('должен обрабатывать начало регистрации', () => {
     (registerUserApi as jest.Mock).mockReturnValue(new Promise(() => {}));
-
-    store.dispatch(
-      registerUser({
-        email: 'test@example.com',
-        password: 'password',
-        name: 'Test User'
-      })
-    );
-
+    
+    store.dispatch(registerUser(mockRegisterData));
+    
     const state = store.getState().user;
     expect(state.loading).toBe(true);
     expect(state.error).toBeNull();
   });
 
   test('должен обрабатывать успешную регистрацию', async () => {
-    (registerUserApi as jest.Mock).mockResolvedValue({
-      user: mockUser,
-      accessToken: 'test-token',
-      refreshToken: 'test-refresh-token'
-    });
+    (registerUserApi as jest.Mock).mockResolvedValue(mockUserResponse);
 
-    await store.dispatch(
-      registerUser({
-        email: 'test@example.com',
-        password: 'password',
-        name: 'Test User'
-      })
-    );
+    await store.dispatch(registerUser(mockRegisterData));
 
     const state = store.getState().user;
     expect(state.user).toEqual(mockUser);
@@ -124,13 +115,7 @@ describe('Редьюсер пользователя', () => {
     const errorMessage = 'Failed to register';
     (registerUserApi as jest.Mock).mockRejectedValue(new Error(errorMessage));
 
-    await store.dispatch(
-      registerUser({
-        email: 'test@example.com',
-        password: 'password',
-        name: 'Test User'
-      })
-    );
+    await store.dispatch(registerUser(mockRegisterData));
 
     const state = store.getState().user;
     expect(state.loading).toBe(false);
@@ -139,9 +124,10 @@ describe('Редьюсер пользователя', () => {
 
   test('должен обрабатывать начало обновления пользователя', () => {
     (updateUserApi as jest.Mock).mockReturnValue(new Promise(() => {}));
-
-    store.dispatch(updateUser({ name: 'New Name' }));
-
+    
+    const updateData = { name: 'New Name' };
+    store.dispatch(updateUser(updateData));
+    
     const state = store.getState().user;
     expect(state.loading).toBe(true);
     expect(state.error).toBeNull();
@@ -162,7 +148,8 @@ describe('Редьюсер пользователя', () => {
     const errorMessage = 'Failed to update user';
     (updateUserApi as jest.Mock).mockRejectedValue(new Error(errorMessage));
 
-    await store.dispatch(updateUser({ name: 'New Name' }));
+    const updateData = { name: 'New Name' };
+    await store.dispatch(updateUser(updateData));
 
     const state = store.getState().user;
     expect(state.loading).toBe(false);
